@@ -1,0 +1,1 @@
+{"seed": 42, "n_epochs": 100, "n_negatives": 1, "batch_size": 512, "lr": 0.00075, "n_users_eval": 7000, "eval_every": 10, "saving_dir": "results/ml-1m", "r": 8, "margin": 0.5, "lambda": 0.0001}

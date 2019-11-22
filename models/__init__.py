@@ -20,7 +20,6 @@ class Model(object):
         self.eval_every = params['eval_every']
         # Set both np and tf random states
         self.state = np.random.RandomState(self.seed)
-        tf.random.set_random_seed(self.seed)
         self.is_instantiated = False
 
     def fit(self, sess, train_ratings, eval_ratings,

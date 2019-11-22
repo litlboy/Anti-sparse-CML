@@ -11,7 +11,7 @@ gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.15)
 datasets = ['ml-1m']
 
 r_list = [8, 16, 32, 64, 128, 256]
-margins = [0.25, 0.5, 0.75, 1]
+margins = [0.5,0.25, 0.75, 1]
 lambdas = np.logspace(-4, -1, 10)
 
 params = {}
