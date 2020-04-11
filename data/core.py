@@ -8,12 +8,14 @@ from tqdm import tqdm
 def download_dataset(name):
 
     os.chdir('data')
-    
+
     if not os.path.exists(name):
         os.mkdir(name)
-    
+
+    os.chdir(name)
+
     print('DOWNLOADING RAW FILE')
-    
+
     if name == 'ml-1m':
         url = 'http://files.grouplens.org/datasets/movielens/ml-1m.zip'
         r = requests.get(url)
@@ -22,12 +24,13 @@ def download_dataset(name):
 
     elif name == 'amazon-CDs':
         url = 'http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/ratings_CDs_and_Vinyl.csv'
-        df = pd.read_csv(url, header=['user-id', 'item-id', 'rating', 'timestamp'])
-        df.to_csv(name)
+        df = pd.read_csv(url, names=['user-id', 'item-id', 'rating', 'timestamp'])
+        df.to_csv('ratings.csv', index=False)
 
     else:
         print('Download method for dataset {} not supported'.format(name))
-    
+
+    os.chdir('..')
     os.chdir('..')
 
 def process_data(name, train_size=0.5, eval_size=0.25,
@@ -41,15 +44,14 @@ def process_data(name, train_size=0.5, eval_size=0.25,
         df = pd.read_csv('data/ml-1m/ratings.dat', delimiter='::', header=None).iloc[:, :3]
         df.rename(columns={0: 'user_id', 1: 'item_id', 2: 'rating'}, inplace=True)
     elif name == 'amazon-CDs':
-        df = pd.read_csv('data/amazon-CDs/ratings.csv', header=None).iloc[:, :3]
-        df.rename(columns={0: 'user_id', 1: 'item_id', 2: 'rating'}, inplace=True)
+        df = pd.read_csv('data/amazon-CDs/ratings.csv').iloc[:, :3]
+        df.rename(columns={'user-id':'user_id', 'item-id':'item_id'}, inplace=True)
     elif name == 'yelp':
         df = pd.read_csv('data/yelp/review.csv', usecols=[1, 2, 3])
         df.rename(columns={'business_id': 'item_id', 'stars': 'rating'}, inplace=True)
     else:
         raise NotImplementedError('{} dataset processing was not implemented yet'.format(name))
 
-    df.rename(columns={0: 'user_id', 1: 'item_id', 2: 'rating'}, inplace=True)
     ratings = df['rating'].values
 
     _, user_ids = np.unique(df['user_id'], return_inverse=True)

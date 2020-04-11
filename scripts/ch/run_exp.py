@@ -7,9 +7,9 @@ import tensorflow as tf
 from models import restore_model
 
 gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.15)
-r_list = [8, 16, 32]
+r_list = [8, 16, 32, 64, 128, 256]
 lambd_list = [1e3, 1e2, 1e1, 1, 5e-1, 1e-1, 5e-2, 1e-2, 5e-3, 1e-3]
-datasets = ['ml-1m']
+datasets = ['ml-1m', 'amazon-CD']
 
 params = {}
 params['seed'] = 42
@@ -33,6 +33,7 @@ for dataset in datasets:
         print('EMBEDDING DIM = {}'.format(r))
         params['r'] = r
         for lambd in lambd_list:
+            print('LAMBDA = {}'.format(lambd))
             params['lambda'] = lambd
             with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
                 ch = CH(params)

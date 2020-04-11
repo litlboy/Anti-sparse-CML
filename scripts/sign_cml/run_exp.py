@@ -8,16 +8,16 @@ from models import restore_model
 
 gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.15)
 
-datasets = ['ml-1m']
+datasets = ['ml-1m', 'amazon-CDs', 'yelp']
 
 r_list = [8, 16, 32, 64, 128, 256]
 margins = [0.25, 0.5, 0.75, 1]
+b_sizes = [512, 1024]
+n_negs = [1, 5]
 
 params = {}
 params['seed'] = 42
-params['n_epochs'] = 100
-params['n_negatives'] = 1
-params['batch_size'] = 512
+params['n_epochs'] = 151
 params['lr'] = 7.5e-4
 params['n_users_eval'] = 7000
 params['eval_every'] = 10
@@ -37,8 +37,13 @@ for dataset in datasets:
         print('-----------------------------------------')
         print('EMBEDDING DIM = {}'.format(r))
         params['r'] = r
-        for margin in margins:
+        hp_it = itertools.product(b_sizes, n_negs, margins)
+        for b_size, n_neg, margin in hp_it:
+            print('BATCH SIZE = {}'.format(b_size))
+            print('N NEGATIVES = {}'.format(n_neg))
             print('MARGIN = {}'.format(margin))
+            params['batch_size'] = b_size
+            params['n_negatives'] = n_neg
             params['margin'] = margin
             with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
                 sign_cml = SignCML(params)
